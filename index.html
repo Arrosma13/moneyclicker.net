@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Money Clicker by Arrosma13</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        #game-container {
+            text-align: center;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        #click-button {
+            font-size: 24px;
+            padding: 10px 20px;
+            margin: 10px;
+            cursor: pointer;
+        }
+        #score {
+            font-size: 36px;
+            margin: 20px 0;
+        }
+        .power-up {
+            font-size: 18px;
+            padding: 5px 10px;
+            margin: 5px;
+            cursor: pointer;
+        }
+        .power-up:disabled {
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <h1>- Money Clicker -</h1>
+        <div id="score">0</div>
+        <button id="click-button">€ click here €</button>
+        <div id="power-ups">
+            <button class="power-up" onclick="buyPowerUp(1)">Auto-Clicker (Cost: 10)</button>
+            <button class="power-up" onclick="buyPowerUp(2)">Double Click (Cost: 50)</button>
+            <button class="power-up" onclick="buyPowerUp(3)">Mega Boost (Cost: 100)</button>
+        </div>
+    </div>
+
+    <script>
+        let score = 0;
+        let clickValue = 1;
+        let autoClickerCount = 0;
+        let doubleClickCount = 0;
+        let megaBoostCount = 0;
+
+        const scoreElement = document.getElementById('score');
+        const clickButton = document.getElementById('click-button');
+
+        clickButton.addEventListener('click', () => {
+            incrementScore(clickValue);
+        });
+
+        function incrementScore(amount) {
+            score += amount;
+            updateScore();
+        }
+
+        function updateScore() {
+            scoreElement.textContent = score;
+            updatePowerUpButtons();
+        }
+
+        function buyPowerUp(type) {
+            switch(type) {
+                case 1: // Auto-Clicker
+                    if (score >= 10) {
+                        score -= 10;
+                        autoClickerCount++;
+                        setInterval(() => incrementScore(1), 1000);
+                    }
+                    break;
+                case 2: // Double Click
+                    if (score >= 50) {
+                        score -= 50;
+                        doubleClickCount++;
+                        clickValue *= 2;
+                    }
+                    break;
+                case 3: // Mega Boost
+                    if (score >= 100) {
+                        score -= 100;
+                        megaBoostCount++;
+                        clickValue *= 5;
+                        setTimeout(() => {
+                            clickValue /= 5;
+                            megaBoostCount--;
+                            updatePowerUpButtons();
+                        }, 10000); // 10 seconds boost
+                    }
+                    break;
+            }
+            updateScore();
+        }
+
+        function updatePowerUpButtons() {
+            document.querySelectorAll('.power-up').forEach((button, index) => {
+                const cost = [10, 50, 100][index];
+                button.disabled = score < cost;
+            });
+        }
+
+        // Initial update
+        updatePowerUpButtons();
+    </script>
+</body>
+</html>
